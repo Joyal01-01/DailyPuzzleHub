@@ -1,0 +1,71 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum GameType {
+  BUILTIN
+  DYNAMIC_TRIVIA
+  DYNAMIC_WORD
+  DYNAMIC_GRID
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String
+  avatar        String?
+  role          Role           @default(USER)
+  country       String         @default("NP")
+  totalXp       Int            @default(0)
+  currentStreak Int            @default(0)
+  createdAt     DateTime       @default(now())
+  gameResults   GameResult[]
+}
+
+model Game {
+  id          String       @id @default(uuid())
+  slug        String       @unique
+  title       String
+  category    String
+  thumbnail   String
+  type        GameType     @default(BUILTIN)
+  isActive    Boolean      @default(true)
+  configJson  Json?        // Stores dynamic rules or grid layouts
+  createdAt   DateTime     @default(now())
+  puzzles     Puzzle[]
+  results     GameResult[]
+}
+
+model Puzzle {
+  id          String   @id @default(uuid())
+  gameId      String
+  date        String   // YYYY-MM-DD
+  contentJson Json     // Game data, clues, or solution payload
+  game        Game     @relation(fields: [gameId], references: [id])
+
+  @@unique([gameId, date])
+}
+
+model GameResult {
+  id         String   @id @default(uuid())
+  userId     String
+  gameId     String
+  date       String
+  timeMs     Int
+  score      Int
+  isRevived  Boolean  @default(false)
+  user       User     @relation(fields: [userId], references: [id])
+  game       Game     @relation(fields: [gameId], references: [id])
+
+  @@unique([userId, gameId, date])
+}
