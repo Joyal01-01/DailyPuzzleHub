@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { GameRepository } from "@/lib/db";
-import { renderGameBySlug } from "@/components/games/GameRegistry";
+import GameRegistry from "@/components/games/GameRegistry";
 import Link from "next/link";
 import { ArrowLeft, ShieldAlert } from "lucide-react";
 
@@ -21,16 +21,18 @@ export default async function GamePage({ params }: GamePageProps) {
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-bold text-white">Puzzle Currently Inactive</h2>
+        <h2 className="font-serif text-2xl font-bold text-white tracking-wide">
+          Puzzle Currently Inactive
+        </h2>
         <p className="mt-2 text-sm text-slate-400">
-          This daily game has been disabled by the site administrator for maintenance or rotation. Check back soon!
+          This daily edition is currently held in reserve by the academy curator. Please explore our other daily disciplines.
         </p>
         <Link
           href="/"
-          className="mt-6 flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-indigo-500 transition"
+          className="mt-6 flex items-center gap-2 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-600/30 to-amber-700/20 px-5 py-2.5 text-xs font-serif uppercase tracking-widest text-amber-200 hover:from-amber-600/40 hover:to-amber-700/30 transition shadow-lg"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Return to All Games</span>
+          <span>Return to Salon</span>
         </Link>
       </div>
     );
@@ -38,7 +40,7 @@ export default async function GamePage({ params }: GamePageProps) {
 
   return (
     <div className="w-full">
-      {renderGameBySlug(game)}
+      <GameRegistry game={game} />
     </div>
   );
 }

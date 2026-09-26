@@ -3,38 +3,65 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 248, 250, 252;
-  --background-start-rgb: 11, 15, 25;
-  --background-end-rgb: 15, 23, 42;
+  --background-start: #08090d;
+  --background-mid: #0d0e15;
+  --background-end: #12131c;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb))
-    )
-    no-repeat fixed;
+  color: #f1f5f9;
+  background: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 175, 55, 0.08), transparent 70%),
+    radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.05), transparent 50%),
+    linear-gradient(180deg, var(--background-start) 0%, var(--background-mid) 50%, var(--background-end) 100%);
+  background-attachment: fixed;
   min-height: 100vh;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* Custom scrollbar */
+/* Luxury Gold & Metallic Gradients */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #f7ecc1 0%, #d4af37 50%, #aa820a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gold-subtle {
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px -5px rgba(212, 175, 55, 0.2);
+}
+
+/* 3D Tile Flip Animation */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Custom Luxury Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: #08090d;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
+  background: #1f2233;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #2e334d;
 }

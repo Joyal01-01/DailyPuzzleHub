@@ -6,6 +6,7 @@ import { TARGET_WORDS, VALID_GUESS_SET } from "@/lib/gameData";
 import { createSeededRng, getUtcDateString } from "@/lib/prng";
 import { soundFx } from "@/lib/sound";
 import { useStore } from "@/store/useStore";
+import { Sparkles, Delete } from "lucide-react";
 
 export default function WordleGame() {
   const { soundEnabled } = useStore();
@@ -16,8 +17,9 @@ export default function WordleGame() {
   const [isWon, setIsWon] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [invalidShake, setInvalidShake] = useState(false);
+  const [revealingRow, setRevealingRow] = useState<number | null>(null);
 
-  // Initialize daily word
+  // Initialize daily word deterministically
   useEffect(() => {
     const rng = createSeededRng(`wordle_${dateStr}`);
     const wordIdx = Math.floor(rng() * TARGET_WORDS.length);
@@ -28,13 +30,13 @@ export default function WordleGame() {
 
   const handleKey = useCallback(
     (key: string) => {
-      if (isWon || isGameOver) return;
+      if (isWon || isGameOver || revealingRow !== null) return;
 
       if (key === "ENTER") {
         if (currentGuess.length !== 5) {
           setInvalidShake(true);
           if (soundEnabled) soundFx.playError();
-          setTimeout(() => setInvalidShake(false), 400);
+          setTimeout(() => setInvalidShake(false), 500);
           return;
         }
 
@@ -42,20 +44,26 @@ export default function WordleGame() {
         if (!VALID_GUESS_SET.has(currentGuess.toLowerCase())) {
           setInvalidShake(true);
           if (soundEnabled) soundFx.playError();
-          setTimeout(() => setInvalidShake(false), 400);
+          setTimeout(() => setInvalidShake(false), 500);
           return;
         }
 
         if (soundEnabled) soundFx.playPop();
         const nextGuesses = [...guesses, upperGuess];
+        const nextRowIdx = guesses.length;
+        setRevealingRow(nextRowIdx);
         setGuesses(nextGuesses);
         setCurrentGuess("");
 
-        if (upperGuess === targetWord) {
-          setIsWon(true);
-        } else if (nextGuesses.length >= maxGuesses) {
-          setIsGameOver(true);
-        }
+        // Reveal animation delay
+        setTimeout(() => {
+          setRevealingRow(null);
+          if (upperGuess === targetWord) {
+            setIsWon(true);
+          } else if (nextGuesses.length >= maxGuesses) {
+            setIsGameOver(true);
+          }
+        }, 5 * 200 + 100);
       } else if (key === "BACKSPACE" || key === "DEL") {
         setCurrentGuess((prev) => prev.slice(0, -1));
         if (soundEnabled) soundFx.playPop();
@@ -64,7 +72,7 @@ export default function WordleGame() {
         if (soundEnabled) soundFx.playPop();
       }
     },
-    [currentGuess, guesses, isWon, isGameOver, soundEnabled, targetWord]
+    [currentGuess, guesses, isWon, isGameOver, revealingRow, soundEnabled, targetWord]
   );
 
   // Handle physical keyboard
@@ -79,7 +87,7 @@ export default function WordleGame() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [handleKey]);
 
-  // Revival (adds 2 extra guesses)
+  // Revival (gives a second chance with current guesses intact)
   const handleRevive = () => {
     setIsGameOver(false);
   };
@@ -114,14 +122,14 @@ export default function WordleGame() {
       title="Daily Word Guess"
       category="Word"
       instructions={[
-        "Guess the secret 5-letter word in 6 attempts.",
-        "Green tile: Letter is correct and in the right spot.",
-        "Yellow tile: Letter is in the word but in the wrong spot.",
-        "Gray tile: Letter is not in the secret word at all.",
+        "Deduce the secret 5-letter word in six refined attempts.",
+        "Emerald tile: The letter is correct and situated in the precise position.",
+        "Warm Gold tile: The letter belongs in the word, but occupies a different position.",
+        "Charcoal tile: The letter does not appear anywhere in today's secret word.",
       ]}
       isWon={isWon}
       isGameOver={isGameOver}
-      score={isWon ? Math.max(100, 700 - guesses.length * 100) : 0}
+      score={isWon ? Math.max(150, 700 - guesses.length * 90) : 0}
       onRevive={handleRevive}
       onRestart={() => {
         setGuesses([]);
@@ -130,9 +138,20 @@ export default function WordleGame() {
         setIsGameOver(false);
       }}
     >
-      <div className="flex flex-col items-center">
-        {/* Wordle Grid */}
-        <div className="grid grid-rows-6 gap-2 mb-6">
+      <div className="flex flex-col items-center select-none w-full max-w-lg">
+        {/* Subtle Decorative Header Line */}
+        <div className="mb-6 flex items-center gap-3 text-gold-500/40">
+          <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-gold-500/40" />
+          <Sparkles className="w-3.5 h-3.5 text-gold-400" />
+          <span className="font-serif text-[10px] uppercase tracking-widest text-gold-400/80">
+            Lexicon of the Day
+          </span>
+          <Sparkles className="w-3.5 h-3.5 text-gold-400" />
+          <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-gold-500/40" />
+        </div>
+
+        {/* Wordle 5x6 Matrix */}
+        <div className="grid grid-rows-6 gap-2 sm:gap-2.5 mb-8">
           {Array.from({ length: 6 }).map((_, rowIdx) => {
             const isCurrentRow = rowIdx === guesses.length;
             const guess = guesses[rowIdx] || "";
@@ -140,37 +159,46 @@ export default function WordleGame() {
             return (
               <div
                 key={rowIdx}
-                className={`grid grid-cols-5 gap-2 ${
+                className={`grid grid-cols-5 gap-2 sm:gap-2.5 ${
                   isCurrentRow && invalidShake ? "animate-shake" : ""
                 }`}
               >
                 {Array.from({ length: 5 }).map((_, colIdx) => {
                   let letter = "";
                   let tileStyle =
-                    "border-slate-700 bg-slate-900/60 text-white font-extrabold";
+                    "border-white/10 bg-obsidian-900/60 text-slate-300 shadow-inner";
 
                   if (rowIdx < guesses.length) {
                     letter = guess[colIdx] || "";
                     const status = getLetterStatus(guess, letter, colIdx);
                     if (status === "correct") {
-                      tileStyle = "bg-emerald-600 border-emerald-500 text-white animate-flip";
+                      tileStyle =
+                        "bg-gradient-to-b from-emerald-700 to-emerald-900 border-emerald-500/80 text-white shadow-lg shadow-emerald-900/40";
                     } else if (status === "present") {
-                      tileStyle = "bg-amber-600 border-amber-500 text-white animate-flip";
+                      tileStyle =
+                        "bg-gradient-to-b from-amber-600 to-amber-800 border-amber-400/80 text-white shadow-lg shadow-amber-900/40";
                     } else {
-                      tileStyle = "bg-slate-800 border-slate-700 text-slate-400";
+                      tileStyle =
+                        "bg-obsidian-800/80 border-white/5 text-slate-500";
                     }
                   } else if (isCurrentRow) {
                     letter = currentGuess[colIdx] || "";
                     if (letter) {
                       tileStyle =
-                        "border-indigo-400 bg-slate-800 text-white scale-105 transition-transform";
+                        "border-gold-500/70 bg-obsidian-850 text-gold-200 ring-1 ring-gold-500/30 scale-102 shadow-md";
                     }
                   }
 
                   return (
                     <div
                       key={colIdx}
-                      className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl border-2 text-xl sm:text-2xl transition-all shadow-md select-none ${tileStyle}`}
+                      style={{
+                        animationDelay:
+                          rowIdx === revealingRow ? `${colIdx * 150}ms` : "0ms",
+                      }}
+                      className={`flex h-13 w-13 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border text-2xl sm:text-3xl font-serif font-black tracking-wider transition-all duration-300 ${tileStyle} ${
+                        rowIdx === revealingRow ? "animate-flip" : ""
+                      }`}
                     >
                       {letter}
                     </div>
@@ -181,16 +209,24 @@ export default function WordleGame() {
           })}
         </div>
 
-        {/* Virtual Keyboard */}
-        <div className="flex flex-col gap-1.5 w-full max-w-md">
+        {/* Sophisticated Virtual Keyboard */}
+        <div className="flex flex-col gap-1.5 sm:gap-2 w-full max-w-md">
           {keyboardRows.map((row, rIdx) => (
             <div key={rIdx} className="flex justify-center gap-1 sm:gap-1.5">
               {row.map((k) => {
                 const status = keyStatuses[k];
-                let bg = "bg-slate-800 hover:bg-slate-700 text-white";
-                if (status === "correct") bg = "bg-emerald-600 text-white";
-                else if (status === "present") bg = "bg-amber-600 text-white";
-                else if (status === "absent") bg = "bg-slate-950 text-slate-500";
+                let bg =
+                  "border border-white/10 bg-obsidian-850 text-slate-200 hover:border-gold-500/40 hover:bg-obsidian-800 hover:text-white";
+
+                if (status === "correct") {
+                  bg =
+                    "border border-emerald-500/80 bg-emerald-800 text-white shadow-emerald-900/50";
+                } else if (status === "present") {
+                  bg =
+                    "border border-amber-400/80 bg-amber-700 text-white shadow-amber-900/50";
+                } else if (status === "absent") {
+                  bg = "border-transparent bg-obsidian-950/80 text-slate-600";
+                }
 
                 const isSpecial = k === "ENTER" || k === "DEL";
 
@@ -198,13 +234,13 @@ export default function WordleGame() {
                   <button
                     key={k}
                     onClick={() => handleKey(k)}
-                    className={`flex items-center justify-center rounded-lg font-bold transition active:scale-95 shadow select-none ${
+                    className={`flex items-center justify-center rounded-xl font-serif font-bold transition-all duration-150 active:scale-95 shadow-sm select-none ${
                       isSpecial
-                        ? "px-3 sm:px-4 py-3 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200"
-                        : "h-11 sm:h-12 w-8 sm:w-10 text-sm"
+                        ? "px-3 sm:px-4 py-3 text-[11px] uppercase tracking-widest border border-gold-500/30 bg-obsidian-800 text-gold-300 hover:bg-obsidian-750"
+                        : "h-11 sm:h-12 w-8 sm:w-10 text-sm tracking-wide"
                     } ${bg}`}
                   >
-                    {k}
+                    {k === "DEL" ? <Delete className="w-4 h-4 text-slate-300" /> : k}
                   </button>
                 );
               })}

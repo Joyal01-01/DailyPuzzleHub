@@ -8,14 +8,14 @@ import { soundFx } from "@/lib/sound";
 import { requestAdBreak } from "@/lib/adsense";
 import {
   ArrowLeft,
-  HelpCircle,
+  BookOpen,
   Trophy,
   Share2,
   RefreshCw,
   PlayCircle,
   Timer,
-  CheckCircle2,
   Sparkles,
+  ShieldAlert,
 } from "lucide-react";
 
 interface GameContainerProps {
@@ -41,7 +41,6 @@ export default function GameContainer({
   isWon,
   isGameOver,
   score,
-  movesOrGuesses,
   onRestart,
   onRevive,
   shareText,
@@ -62,22 +61,22 @@ export default function GameContainer({
     return () => clearInterval(interval);
   }, [isGameOver, isWon]);
 
-  // Handle Win & Confetti
+  // Handle Win & Confetti with refined gold palette
   useEffect(() => {
     if (isWon && !hasRecorded) {
       setHasRecorded(true);
       if (soundEnabled) soundFx.playSuccess();
       try {
         confetti({
-          particleCount: 120,
-          spread: 70,
+          particleCount: 80,
+          spread: 60,
           origin: { y: 0.6 },
+          colors: ["#D4AF37", "#F3E5AB", "#10B981", "#E5CA68", "#FFFFFF"],
         });
       } catch {}
 
       recordGameCompletion(slug, score, seconds * 1000, false);
 
-      // Trigger post-game interstitial ad break
       requestAdBreak({
         type: "next",
         name: `game_win_${slug}`,
@@ -90,10 +89,10 @@ export default function GameContainer({
   const handleShare = () => {
     const text =
       shareText ||
-      `DailyPuzzleHub 🧩 - ${title}\n` +
-      `Date: ${new Date().toISOString().split("T")[0]}\n` +
-      `Score: ${score} XP | Time: ${formatTime(seconds)}\n` +
-      `Play now: https://dailypuzzlehub.com/games/${slug}`;
+      `DailyPuzzleHub 🏛️ — ${title}\n` +
+      `Chronicle: ${new Date().toISOString().split("T")[0]}\n` +
+      `Mastery: ${score} XP | Duration: ${formatTime(seconds)}\n` +
+      `Explore: https://dailypuzzlehub.com/games/${slug}`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -107,128 +106,141 @@ export default function GameContainer({
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       {/* Top Breadcrumb & Controls */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-        <div className="flex items-center gap-3">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-white/5 pb-4">
+        <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 transition"
+            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-obsidian-850 px-3.5 py-1.5 text-xs font-serif uppercase tracking-widest text-slate-300 hover:border-gold-500/40 hover:text-gold-300 transition"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Hub</span>
+            <span>Salon</span>
           </Link>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
+            <div className="flex items-center gap-2.5">
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-wide text-white">
                 {title}
               </h1>
-              <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-xs font-bold text-indigo-300 border border-indigo-500/30">
+              <span className="rounded-full border border-gold-500/30 bg-gold-500/10 px-2.5 py-0.5 font-serif text-[11px] font-bold tracking-widest uppercase text-gold-300">
                 {category}
               </span>
             </div>
-            <div className="text-xs text-slate-400">
-              Daily Challenge • UTC Seed {new Date().toISOString().split("T")[0]}
+            <div className="text-[11px] tracking-wider uppercase text-slate-400 font-sans mt-0.5">
+              Daily Master Edition • Seed {new Date().toISOString().split("T")[0]}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* Timer Display */}
-          <div className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/90 px-3 py-1.5 text-xs font-mono text-slate-200">
-            <Timer className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-obsidian-900/90 px-3.5 py-1.5 text-xs font-mono text-slate-300 shadow-inner">
+            <Timer className="w-3.5 h-3.5 text-gold-400" />
             <span>{formatTime(seconds)}</span>
           </div>
 
-          {/* Help Button */}
+          {/* Rules Button */}
           <button
             onClick={() => setShowHelp(!showHelp)}
-            className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white transition"
+            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-obsidian-850 px-3.5 py-1.5 text-xs font-serif uppercase tracking-wider text-slate-300 hover:border-gold-500/30 hover:text-gold-300 transition"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="hidden sm:inline">Rules</span>
+            <BookOpen className="w-3.5 h-3.5 text-gold-400" />
+            <span className="hidden sm:inline">Codex</span>
           </button>
         </div>
       </div>
 
-      {/* Rules Dropdown / Card */}
+      {/* Rules Codex Overlay */}
       {showHelp && (
-        <div className="mb-6 rounded-2xl border border-indigo-500/30 bg-indigo-950/20 p-4 backdrop-blur-md">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold text-indigo-300 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4" />
-              How to Play {title}
+        <div className="mb-8 rounded-2xl border border-gold-500/25 bg-gradient-to-br from-obsidian-900/95 via-obsidian-850/95 to-slate-900/95 p-6 backdrop-blur-xl shadow-2xl">
+          <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+            <h3 className="font-serif text-base font-bold text-gold-300 flex items-center gap-2 tracking-wide uppercase">
+              <Sparkles className="w-4 h-4 text-gold-400" />
+              The Codex • Rules of Engagement
             </h3>
             <button
               onClick={() => setShowHelp(false)}
-              className="text-xs text-slate-400 hover:text-white"
+              className="text-xs uppercase tracking-widest text-slate-400 hover:text-white transition font-serif"
             >
-              Close
+              Dismiss
             </button>
           </div>
-          <ul className="list-disc pl-5 space-y-1 text-xs text-slate-300">
+          <ul className="space-y-2 text-xs text-slate-300 leading-relaxed font-sans">
             {instructions.map((line, idx) => (
-              <li key={idx}>{line}</li>
+              <li key={idx} className="flex items-start gap-2.5">
+                <span className="text-gold-500 font-bold select-none">•</span>
+                <span>{line}</span>
+              </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Game Content Box */}
-      <div className="relative flex min-h-[460px] flex-col items-center justify-center rounded-2xl border border-slate-800 bg-slate-900/40 p-4 sm:p-8 backdrop-blur-sm shadow-xl">
+      {/* Main Game Stage */}
+      <div className="relative flex min-h-[480px] flex-col items-center justify-center rounded-3xl border border-white/10 bg-gradient-to-b from-obsidian-900/70 via-obsidian-850/50 to-obsidian-900/70 p-6 sm:p-10 backdrop-blur-xl shadow-2xl">
         {children}
       </div>
 
-      {/* Game Win / Game Over Overlay Modal */}
+      {/* Luxury Victory / Defeat Modal */}
       {(isWon || isGameOver) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 text-center text-white shadow-2xl animate-tile-pop">
-            <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-lg p-4">
+          <div className="w-full max-w-md rounded-3xl border border-gold-500/30 bg-gradient-to-b from-obsidian-850 via-obsidian-900 to-obsidian-950 p-8 text-center text-white shadow-2xl animate-tile-pop gold-glow">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-gold-500/40 bg-gold-500/10 text-gold-400 shadow-lg">
               {isWon ? (
-                <Trophy className="w-8 h-8 text-yellow-400" />
+                <Trophy className="w-8 h-8 text-gold-400 animate-pulse" />
               ) : (
-                <HelpCircle className="w-8 h-8 text-rose-400" />
+                <ShieldAlert className="w-8 h-8 text-rose-400" />
               )}
             </div>
 
-            <h2 className="text-2xl font-bold">
-              {isWon ? "Puzzle Completed!" : "Puzzle Incomplete"}
+            <div className="text-[10px] font-serif uppercase tracking-widest text-gold-400/80 mb-1">
+              {isWon ? "Mastery Achieved" : "Trial Concluded"}
+            </div>
+
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-wide text-white">
+              {isWon ? "Triumph Recorded" : "The Riddle Stands"}
             </h2>
 
-            <p className="mt-1 text-sm text-slate-300">
+            <p className="mt-2 text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
               {isWon
-                ? "Outstanding work! You conquered today's daily puzzle challenge."
-                : "You ran out of attempts for this seed. Watch an ad to revive or try again!"}
+                ? "Your intellect has solved today's daily cipher. Your achievement has been etched into the chronicles."
+                : "The daily challenge has proven elusive on this attempt. Revive your trial with a brief pause, or meditate on the outcome."}
             </p>
 
-            <div className="my-5 grid grid-cols-2 gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+            <div className="my-6 grid grid-cols-2 gap-4 rounded-2xl border border-white/10 bg-obsidian-950/80 p-4">
               <div>
-                <div className="text-xs uppercase text-slate-400 font-bold">Score Earned</div>
-                <div className="text-xl font-extrabold text-indigo-400">+{score} XP</div>
+                <div className="text-[10px] font-serif uppercase tracking-widest text-slate-400">
+                  XP Acquired
+                </div>
+                <div className="text-xl sm:text-2xl font-serif font-black text-gold-400 mt-0.5">
+                  +{score} XP
+                </div>
               </div>
               <div>
-                <div className="text-xs uppercase text-slate-400 font-bold">Time Taken</div>
-                <div className="text-xl font-extrabold text-slate-200">
+                <div className="text-[10px] font-serif uppercase tracking-widest text-slate-400">
+                  Elapsed Time
+                </div>
+                <div className="text-xl sm:text-2xl font-mono font-bold text-slate-200 mt-0.5">
                   {formatTime(seconds)}
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-3">
               {isWon ? (
                 <>
                   <button
                     onClick={handleShare}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg hover:from-indigo-600 hover:to-purple-700 transition"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 px-6 py-3 font-serif text-xs uppercase tracking-widest font-black text-obsidian-950 shadow-xl hover:from-gold-400 hover:to-amber-500 transition active:scale-98"
                   >
-                    <Share2 className="w-4 h-4" />
-                    {copied ? "Copied to Clipboard!" : "Share Results"}
+                    <Share2 className="w-4 h-4 text-obsidian-950" />
+                    <span>{copied ? "Proclamation Copied" : "Share Chronicle"}</span>
                   </button>
                   <Link
                     href="/"
-                    className="flex items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 transition"
+                    className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-obsidian-800 px-4 py-2.5 font-serif text-xs uppercase tracking-wider text-slate-300 hover:bg-obsidian-700 transition"
                   >
-                    Play Next Game
+                    Explore Next Riddle
                   </Link>
                 </>
               ) : (
@@ -240,26 +252,26 @@ export default function GameContainer({
                           if (onRevive) onRevive();
                         })
                       }
-                      className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3 font-semibold text-white shadow-lg hover:from-amber-600 hover:to-orange-700 transition"
+                      className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 px-6 py-3 font-serif text-xs uppercase tracking-widest font-black text-obsidian-950 shadow-xl hover:from-amber-400 hover:to-gold-400 transition"
                     >
-                      <PlayCircle className="w-5 h-5" />
-                      Revive & Keep Streak (Watch Ad)
+                      <PlayCircle className="w-4 h-4" />
+                      Revive Trial & Protect Streak
                     </button>
                   )}
                   {onRestart && (
                     <button
                       onClick={onRestart}
-                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 transition"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-obsidian-800 px-4 py-2.5 font-serif text-xs uppercase tracking-wider text-slate-300 hover:bg-obsidian-700 transition"
                     >
-                      <RefreshCw className="w-4 h-4" />
-                      Try Again
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Attempt Again
                     </button>
                   )}
                   <Link
                     href="/"
-                    className="rounded-xl px-4 py-2 text-xs text-slate-400 hover:text-white transition"
+                    className="font-serif text-[11px] uppercase tracking-widest text-slate-500 hover:text-slate-300 transition py-1"
                   >
-                    Return to Hub
+                    Return to Salon
                   </Link>
                 </>
               )}

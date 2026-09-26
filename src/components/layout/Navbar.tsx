@@ -52,76 +52,76 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-obsidian-950/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition">
-            <Sparkles className="w-5 h-5 animate-pulse" />
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-gold-500/40 bg-gradient-to-tr from-amber-700/30 via-gold-500/20 to-amber-500/10 text-gold-300 shadow-lg shadow-gold-500/10 group-hover:scale-105 transition">
+            <Sparkles className="w-5 h-5 text-gold-400" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold tracking-tight text-white sm:text-lg">
-                DailyPuzzle<span className="text-indigo-400">Hub</span>
+            <div className="flex items-center gap-2">
+              <span className="font-serif text-lg sm:text-xl font-bold tracking-wide text-white">
+                DailyPuzzle<span className="text-gold-400">Hub</span>
               </span>
-              <span className="rounded bg-indigo-500/20 px-1.5 py-0.5 text-[10px] font-bold text-indigo-300 border border-indigo-500/30">
+              <span className="rounded border border-gold-500/30 bg-gold-500/10 px-1.5 py-0.5 font-serif text-[10px] font-bold tracking-widest uppercase text-gold-300">
                 PRO 2.0
               </span>
             </div>
-            <div className="flex items-center gap-1 text-[11px] text-slate-400">
-              <Clock className="w-3 h-3 text-indigo-400" />
-              <span>Next UTC puzzle: <strong className="text-slate-200">{timeLeft || "--:--:--"}</strong></span>
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-sans">
+              <Clock className="w-3 h-3 text-gold-400" />
+              <span>Next UTC reset: <strong className="text-slate-200 font-mono">{timeLeft || "--:--:--"}</strong></span>
             </div>
           </div>
         </Link>
 
         {/* Center Navigation */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <nav className="hidden md:flex items-center gap-7 text-xs font-serif uppercase tracking-widest text-slate-300">
           <Link
             href="/"
-            className="hover:text-white transition py-1"
+            className="hover:text-gold-300 transition py-1"
           >
-            All 20 Games
+            Discipline Salon
           </Link>
           <Link
             href="/duel"
-            className="flex items-center gap-1.5 text-amber-400 hover:text-amber-300 transition py-1"
+            className="flex items-center gap-1.5 text-amber-300 hover:text-amber-200 transition py-1"
           >
-            <Swords className="w-4 h-4 animate-bounce" />
-            <span>1v1 Live Duels</span>
-            <span className="rounded-full bg-amber-500/20 px-1.5 py-0.2 text-[9px] font-bold text-amber-300 border border-amber-500/30">
+            <Swords className="w-3.5 h-3.5 text-amber-400" />
+            <span>1v1 Arena</span>
+            <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-1.5 py-0.2 text-[9px] font-bold text-amber-300">
               LIVE
             </span>
           </Link>
           <Link
             href="/leaderboard"
-            className="flex items-center gap-1.5 hover:text-white transition py-1"
+            className="flex items-center gap-1.5 hover:text-gold-300 transition py-1"
           >
-            <Trophy className="w-4 h-4 text-yellow-400" />
-            <span>Leaderboard</span>
+            <Trophy className="w-3.5 h-3.5 text-gold-400" />
+            <span>Hall of Fame</span>
           </Link>
           {user.role === Role.ADMIN && (
             <Link
               href="/admin"
-              className="flex items-center gap-1.5 text-purple-400 hover:text-purple-300 transition py-1"
+              className="flex items-center gap-1.5 text-purple-300 hover:text-purple-200 transition py-1"
             >
-              <Shield className="w-4 h-4" />
-              <span>Admin CMS</span>
+              <Shield className="w-3.5 h-3.5" />
+              <span>Curator CMS</span>
             </Link>
           )}
         </nav>
 
         {/* Right Action Bar */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {/* Daily Streak */}
-          <div className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-400 shadow-sm">
-            <Flame className="w-4 h-4 fill-amber-500 text-amber-500" />
+          <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-300 shadow-sm">
+            <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
             <span>{user.currentStreak}d Streak</span>
           </div>
 
           {/* XP Pill */}
-          <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-1 text-xs font-semibold text-indigo-300">
-            <Zap className="w-3.5 h-3.5 fill-indigo-400 text-indigo-400" />
+          <div className="hidden sm:flex items-center gap-1.5 rounded-xl border border-gold-500/30 bg-gold-500/10 px-2.5 py-1 text-xs font-bold text-gold-300">
+            <Zap className="w-3.5 h-3.5 fill-gold-400 text-gold-400" />
             <span>{user.totalXp.toLocaleString()} XP</span>
           </div>
 
@@ -129,10 +129,10 @@ export default function Navbar() {
           <button
             onClick={toggleSound}
             title={soundEnabled ? "Mute Sound FX" : "Enable Sound FX"}
-            className="rounded-lg border border-slate-800 bg-slate-900 p-2 text-slate-400 hover:text-white transition"
+            className="rounded-xl border border-white/10 bg-obsidian-850 p-2 text-slate-400 hover:text-gold-300 hover:border-gold-500/30 transition"
           >
             {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-indigo-400" />
+              <Volume2 className="w-4 h-4 text-gold-400" />
             ) : (
               <VolumeX className="w-4 h-4 text-slate-500" />
             )}
@@ -145,10 +145,10 @@ export default function Navbar() {
                 switchRole(user.role === Role.ADMIN ? Role.USER : Role.ADMIN)
               }
               title={`Active role: ${user.role}. Click to switch role.`}
-              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-bold transition shadow-sm ${
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-1 text-[11px] font-serif uppercase tracking-wider font-bold transition shadow-sm ${
                 user.role === Role.ADMIN
                   ? "border-purple-500/40 bg-purple-500/20 text-purple-300 hover:bg-purple-500/30"
-                  : "border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  : "border-white/10 bg-obsidian-850 text-slate-300 hover:bg-obsidian-800"
               }`}
             >
               <UserCheck className="w-3.5 h-3.5" />

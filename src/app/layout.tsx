@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display, Cinzel } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AdSenseH5Provider from "@/components/ads/AdSenseH5Provider";
 import RewardedAdModal from "@/components/ads/RewardedAdModal";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "DailyPuzzleHub – 20 Free Daily Word, Logic & Memory Games",
@@ -24,7 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white`}>
+      <body
+        className={`${inter.variable} ${playfair.variable} ${cinzel.variable} font-sans min-h-screen flex flex-col bg-obsidian-950 text-slate-100 antialiased selection:bg-gold-500/30 selection:text-gold-200`}
+      >
         <AdSenseH5Provider />
         <Navbar />
         <main className="flex-1">{children}</main>

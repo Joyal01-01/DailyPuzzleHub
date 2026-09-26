@@ -16,7 +16,7 @@
 All daily puzzles are generated deterministically using a Mulberry32 PRNG keyed to the UTC date string (`YYYY-MM-DD`). Every player worldwide receives the exact same daily puzzle that resets at midnight UTC (00:00 UTC).
 
 | # | Game | Category | Mechanics |
-|---|------|----------|-----------|
+|---|---|---|---|
 | 1 | **Daily Word Guess** | Word | 5-letter word puzzle with virtual keyboard & color feedback (Wordle) |
 | 2 | **Daily Sudoku** | Logic | 9x9 grid with note mode, high WCAG contrast, and mistake counter |
 | 3 | **Daily Minesweeper** | Logic | 9x9 grid with 10 seed-generated mines, flags & status faces |
@@ -25,10 +25,10 @@ All daily puzzles are generated deterministically using a Mulberry32 PRNG keyed 
 | 6 | **Daily Nonogram** | Logic | Picross grid puzzle revealing pixel art from row/column clues |
 | 7 | **Daily 2048** | Math | Sliding tile puzzle with daily starting layout and score tracker |
 | 8 | **Daily Word Search** | Word | 8x8 letter grid with 6 hidden daily words |
-| 9 | **Daily Anagram Scramble**| Word | Unscramble a 7-letter target word with letter slot builder |
+| 9 | **Daily Anagram Scramble** | Word | Unscramble a 7-letter target word with letter slot builder |
 | 10 | **Daily Memory Match** | Memory | Flip grid cards to match 8 emoji pairs with move counter |
 | 11 | **Daily Sliding Tile** | Logic | 3x3 sliding number grid (1-8) with guaranteed solvable shuffle |
-| 12 | **Daily Sequence Memory**| Memory | Simon-style escalating visual pattern memory with sound tones |
+| 12 | **Daily Sequence Memory** | Memory | Simon-style escalating visual pattern memory with sound tones |
 | 13 | **Daily Cryptogram** | Word | Decipher famous quote using 1-to-1 letter substitution cipher |
 | 14 | **Daily Maze Runner** | Logic | Navigate an 11x11 date-generated grid maze in minimal moves |
 | 15 | **Daily Kakuro** | Math | Cross-sums math logic grid puzzle with diagonal clue targets |
@@ -145,17 +145,21 @@ model GameResult {
 ## 🚀 Getting Started
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Generate Prisma Client
+
 ```bash
 npx prisma generate
 ```
 
 ### 3. Configure Environment Variables
+
 Copy `.env.example` to `.env`:
+
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dailypuzzlehub?schema=public"
 REDIS_URL="redis://localhost:6379"
@@ -166,13 +170,16 @@ PORT=3005
 ```
 
 ### 4. Run Development Server (Next.js + Socket.io)
+
 ```bash
 npm run dev
 ```
 
-Visit **http://localhost:3005** to play!
+Visit [http://localhost:3005](http://localhost:3005) to play!
 
 ---
 
 ## 📄 License
+
 MIT License. Created for DailyPuzzleHub.
+
